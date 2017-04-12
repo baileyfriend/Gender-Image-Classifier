@@ -35,32 +35,35 @@ def main(argv):
                 fileSplit = file.split("_")
                 fileList.append(f)
                 count += 1
-            
-
-                if count == 1:
-                    result = requests.get("https://api.genderize.io?name=%s" % fileSplit[0])
-                    result = result.json()
-                    print(result)
-                    tmp = fileSplit[0]
-                elif tmp != fileSplit[0]:
+                already_have = []
+                full_name = fileSplit[0] + fileSplit[1]
+                
+                
+                if full_name not in already_have:
+                    already_have.append(full_name)
+                    if count == 1:
+                        result = requests.get("https://api.genderize.io?name=%s" % fileSplit[0])
+                        result = result.json()
+                        print(result)
+                        tmp = fileSplit[0]
+                    elif tmp != fileSplit[0]:
                         result = requests.get("https://api.genderize.io?name=%s" % fileSplit[0])
                         result = result.json()
                         tmp = fileSplit[0]
-                else:
-                    tmp = fileSplit[0]
-
-                try:
-                    if float(result['probability']) > 0.9:
-                        if result['gender'] == 'male':
-                            shutil.copyfile(f,"%s/%s" % (maleFolder,file))
-                        elif result['gender'] == 'female':
-                            shutil.copyfile(f,"%s/%s" % (femaleFolder,file))
-                except Exception as e:
-                    #print(result['name'])
-                    print("Exception Found")
-                    
-                print(count)
-
+                    else:
+                        tmp = fileSplit[0]
+ 
+                    try:
+                         if float(result['probability']) > 0.9:
+                            if result['gender'] == 'male':
+                                 shutil.copyfile(f,"%s/%s" % (maleFolder,file))
+                            elif result['gender'] == 'female':
+                                shutil.copyfile(f,"%s/%s" % (femaleFolder,file))
+                    except Exception as e:
+                        #print(result['name'])
+                        print("Exception Found")
+                     
+                    print(count)
 
 
 if __name__ == "__main__":
